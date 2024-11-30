@@ -61,7 +61,8 @@ export default async function HotmartWebhookReceiverHandler(
         deletionDate: null,
       },
     });
-
+    console.log('Query result:', existingExternalWebhookReceiverId);
+    
     if (!existingExternalWebhookReceiverId) {
         
       console.log('Creating a new ExternalWebhookReceiver:');
