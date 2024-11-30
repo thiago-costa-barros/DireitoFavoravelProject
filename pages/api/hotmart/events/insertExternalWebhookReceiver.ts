@@ -20,7 +20,7 @@ interface Payload {
 export async function InsertExternalWebhookReceiver(
   payload: Payload,
   webhookType: string
-): Promise<ExternalWebhookReceiver[]> {
+): Promise<void> {
 
   const requestId = payload.id;
   const eventDate = parseDate(payload.creation_date);
@@ -31,22 +31,21 @@ export async function InsertExternalWebhookReceiver(
   const payloadData = payload.data;
 
   try {
-      const newExternalWebhookReceiver = await prisma.$transaction([
-      prisma.externalWebhookReceiver.create({
-        data:{
-          requestId: requestId,
-          eventDate: eventDate,
-          eventName: eventName,
-          status: status,
-          type: type,
-          version: version,
-          payload: payloadData,
-        }
-      })
-    ]) 
+    const newExternalWebhookReceiver = await prisma.$transaction([
+      prisma.$queryRaw`
+      CALL externalschema.executeinsertexternalwebhookreceiver(
+      ${requestId}::text,
+      ${eventDate}::timestamp,
+      ${eventName}::text,
+      ${status}::int4,
+      ${type}::int4,
+      ${version}::text,
+      ${payloadData}::jsonb
+      )
+      `
+    ])
 
     console.log("New ExternalWebhookReceiver");
-    return newExternalWebhookReceiver;
   } catch (error) {
     console.error(error);
     throw error;

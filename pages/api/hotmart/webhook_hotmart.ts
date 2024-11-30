@@ -6,6 +6,9 @@ import { prisma } from "@/app/_lib/prisma";
 import { InsertExternalWebhookReceiver } from './events/insertExternalWebhookReceiver';
 import { verifyToken } from '../utils/tokenVerification';
 import { error } from 'console';
+import { parseDate } from '../utils/parseDate';
+import { MapEnumExternalWebhookReceiverType } from '../utils/enum/map/mapEnumExternalWebhookReceiverType';
+import { ExternalWebhookReceiverStatus } from '../utils/enum/publicEnum';
 
 dotenv.config();
 
@@ -66,9 +69,7 @@ export default async function HotmartWebhookReceiverHandler(
       console.log('Query result:', existingExternalWebhookReceiverId);
 
       if (!existingExternalWebhookReceiverId) {
-
-        console.log('Creating a new ExternalWebhookReceiver:');
-        const newExternalWebhookReceiver = await InsertExternalWebhookReceiver(payload, webhookType);
+        //const newExternalWebhookReceiver = await InsertExternalWebhookReceiver(payload, webhookType);
 
         console.log('Webhook processed successfully. Checking routes events');
       } else {
