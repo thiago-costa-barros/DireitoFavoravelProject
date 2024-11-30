@@ -5,6 +5,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from  "@/app/_lib/prisma";
 import { InsertExternalWebhookReceiver } from './events/insertExternalWebhookReceiver';
 import { verifyToken } from '../utils/tokenVerification';
+import { error } from 'console';
 
 dotenv.config();
 
@@ -27,7 +28,7 @@ export default async function HotmartWebhookReceiverHandler(
   });
 
   if (!verifyToken(req)) {
-    console.log('Invalid tokens, access denied'); // Log de debug
+    console.log('Invalid tokens, access denied: ', error); // Log de debug
     res.status(403).json({
       message: 'Forbidden',
     });
