@@ -1,6 +1,6 @@
 export enum ExternalWebhookReceiverType {
     Insomnia = 0,
-    Hotmart = 1,
+    Hotmart = 1, //'Jodd HTTP'
     Default = 2,
   }
   

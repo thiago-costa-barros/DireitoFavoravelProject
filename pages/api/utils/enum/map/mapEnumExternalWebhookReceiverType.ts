@@ -5,7 +5,7 @@ export function MapEnumExternalWebhookReceiverType(type: string | undefined): Ex
     if(type?.toLocaleLowerCase().includes('insomnia')) {
         return ExternalWebhookReceiverType.Insomnia;
     }
-    else if(type?.toLocaleLowerCase().includes('hotmart')) {
+    else if(type?.toLocaleLowerCase().includes('Jodd HTTP')) {
         return ExternalWebhookReceiverType.Hotmart;
     }
     else {
