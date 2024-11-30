@@ -20,8 +20,8 @@ export default async function HotmartWebhookReceiverHandler(
     return;
   }
 
-  console.log('Method POST received'); // Log de debug
-
+  console.log('Method POST received: '); // Log de debug
+  console.log(req.headers) // Log de debug
   res.status(200).json({
     message: 'Webhook processed successfully',
   });
