@@ -17,7 +17,7 @@ export default async function HotmartWebhookReceiverHandler(
   res: NextApiResponse
 ): Promise<void> {
   console.log('Starting handler');
-
+  console.log('Method: ',req.method);
   if (req.method !== 'POST') {
     res.setHeader('Allow', ['POST']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
