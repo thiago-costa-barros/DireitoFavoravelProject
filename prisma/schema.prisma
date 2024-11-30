@@ -1,0 +1,214 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider             = "prisma-client-js"
+  previewFeatures      = ["multiSchema","typedSql"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["public", "integrationschema", "serviceschema", "externalschema"]
+}
+
+model ExternalWebhookReceiver {
+  id           Int         @id @default(autoincrement()) @map("ExternalWebhookReceiverId")
+  creationDate DateTime    @default(now()) @map("CreationDate")
+  updateDate   DateTime    @updatedAt @map("UpdateDate")
+  deletionDate DateTime?   @map("DeletionDate")
+  requestId    String      @unique @map("RequestId")
+  eventDate    DateTime    @map("EventDate")
+  eventName    String      @map("EventName")
+  status       Int         @map("Status")
+  version      String      @map("Version")
+  payload      Json?        @map("Payload")
+  type         Int         @map("Type")
+  orderNote    OrderNote[]
+  errorLog     ErrorLog[]
+
+  @@map("ExternalWebhookReceiver")
+  @@schema("externalschema")
+}
+
+model OrderNote {
+  id                        Int                     @id @default(autoincrement()) @map("OrderNoteId")
+  creationDate              DateTime                @default(now()) @map("CreationDate")
+  updateDate                DateTime                @updatedAt @map("UpdateDate")
+  deletionDate              DateTime?               @map("DeletionDate")
+  status                    Int                     @map("Status")
+  externalWebhookReceiverId Int                     @map("ExternalWebhookReceiverId")
+  externalWebhookReceiver   ExternalWebhookReceiver @relation(fields: [externalWebhookReceiverId], references: [id])
+  productId                 Int                     @map("ProductId")
+  product                   Product                 @relation(fields: [productId], references: [id])
+  affiliates                Affiliates[]
+  buyerId                   Int                     @map("BuyerId")
+  buyer                     Buyer                   @relation(fields: [buyerId], references: [id])
+  producerName              String?                 @map("ProducerName")
+  purchaseId                Int                     @map("PurchaseId")
+  purchase                  Purchase                @relation(fields: [purchaseId], references: [id])
+  subscriptionId            Int?                    @map("SubscriptionId")
+  subscription              Subscription?           @relation(fields: [subscriptionId], references: [id])
+
+  @@map("OrderNote")
+  @@schema("serviceschema")
+}
+
+model Product {
+  id                     Int         @id @map("ProductId")
+  creationDate           DateTime    @default(now()) @map("CreationDate")
+  updateDate             DateTime    @updatedAt @map("UpdateDate")
+  deletionDate           DateTime?   @map("DeletionDate")
+  lastOrderDate          DateTime?   @map("ProductLastOrderDate")
+  productUcode           String      @map("ProductUcode")
+  productName            String      @map("ProductName")
+  productHasCoProduction Boolean     @map("ProductHasCoProduction")
+  orderNote              OrderNote[]
+
+  @@map("Product")
+  @@schema("serviceschema")
+}
+
+model Affiliates {
+  id            Int        @id @default(autoincrement()) @map("AffiliatesId")
+  creationDate  DateTime   @default(now()) @map("CreationDate")
+  updateDate    DateTime   @updatedAt @map("UpdateDate")
+  deletionDate  DateTime?  @map("DeletionDate")
+  lastOrderDate DateTime?  @map("AffiliateLastOrderDate")
+  affiliateCode String?    @unique @map("AffiliateCode")
+  affiliateName String?    @map("AffiliateName")
+  orderNote     OrderNote? @relation(fields: [orderNoteId], references: [id])
+  orderNoteId   Int?
+
+  @@map("Affiliates")
+  @@schema("serviceschema")
+}
+
+model Buyer {
+  id                       Int         @id @default(autoincrement()) @map("BuyerId")
+  creationDate             DateTime    @default(now()) @map("CreationDate")
+  updateDate               DateTime    @updatedAt @map("UpdateDate")
+  deletionDate             DateTime?   @map("DeletionDate")
+  buyerEmail               String      @unique @map("BuyerEmail")
+  buyerDocument            String?     @map("BuyerDocument")
+  buyerName                String?     @map("BuyerName")
+  buyerCheckoutPhone       String?     @map("BuyerPhone")
+  buyerAddressCountryIso   String?     @map("BuyerAddressCountryIso")
+  buyerAddressCountry      String?     @map("BuyerAddressCountry")
+  buyerAddressZipCode      String?     @map("BuyerAddressZipCode")
+  buyerAddressState        String?     @map("BuyerAddressState")
+  buyerAddressCity         String?     @map("BuyerAddressCity")
+  buyerAddressNeighborhood String?     @map("BuyerAddressNeighborhood")
+  buyerAddressStreet       String?     @map("BuyerAddressStreet")
+  buyerAddressComplement   String?     @map("BuyerAddressComplement")
+  buyerAddressNumber       String?     @map("BuyerAddressNumber")
+  lastOrderDate            DateTime?   @map("BuyerLastOrderDate")
+  OrderNote                OrderNote[]
+
+  @@map("Buyer")
+  @@schema("serviceschema")
+}
+
+model Commissions {
+  id                     Int       @id @default(autoincrement()) @map("CommissionsId")
+  creationDate           DateTime  @default(now()) @map("CreationDate")
+  updateDate             DateTime  @updatedAt @map("UpdateDate")
+  deletionDate           DateTime? @map("DeletionDate")
+  sourceName             String?   @map("CommissionsSourceName")
+  value                  Decimal?  @map("CommissionsValue")
+  currencyValue          String?   @map("CommissionsCurrencyValue")
+  convertedToCurrency    String?   @map("CommissionsConvertedToCurrency")
+  convertedvalue         Decimal?  @map("CommissionsConvertedValue")
+  currencyConvertionRate Decimal?  @map("CommissionsCurrencyConvertionRate")
+  purchase               Purchase? @relation(fields: [purchaseId], references: [id])
+  purchaseId             Int?
+
+  @@map("Commissions")
+  @@schema("serviceschema")
+}
+
+model Purchase {
+  id                               Int            @id @default(autoincrement()) @map("PurchaseId")
+  creationDate                     DateTime       @default(now()) @map("CreationDate")
+  updateDate                       DateTime       @updatedAt @map("UpdateDate")
+  deletionDate                     DateTime?      @map("DeletionDate")
+  orderDate                        DateTime       @map("PurchaseOrderDate")
+  approvedDate                     DateTime       @map("PurchaseApprovedDate")
+  transactionId                    String         @unique @map("PurchaseTransactionId")
+  status                           Int            @map("Status")
+  fullPriceValue                   Decimal        @map("PurchaseFullPriceValue")
+  fullPriceCurrency                String         @map("PurchaseFullPriceCurrency")
+  originalPriceValue               Decimal        @map("PurchaseOriginalPriceValue")
+  originalPriceCurrency            String         @map("PurchaseOriginalPriceCurrency")
+  priceValue                       Decimal        @map("PurchasePriceValue")
+  priceCurrency                    String         @map("PurchasePriceCurrency")
+  offerCode                        String         @map("PurchaseOfferCode")
+  recurrencyNumber                 Int?           @map("PurchaseRecurrencyNumber")
+  subscriptionAnticipationPurchase Boolean?       @map("PurchaseSubscriptionAnticipationPurchase")
+  checkoutCountryName              String         @map("PurchaseCheckoutCountryName")
+  checkoutCountryISO               String         @map("PurchaseCheckoutCountryISO")
+  utmCode                          String?        @map("PurchaseUtmCode")
+  isOrderBump                      Boolean?       @map("PurchaseIsOrderBump")
+  originalTransactionId            String?        @map("PurchaseOriginalTransactionId")
+  nextChargeDate                   DateTime?      @map("NextChargeDate")
+  paymentInfos                     PaymentInfos[]
+  commissions                      Commissions[]
+  orderNote                        OrderNote[]
+
+  @@map("Purchase")
+  @@schema("serviceschema")
+}
+
+model PaymentInfos {
+  id                 Int       @id @default(autoincrement()) @map("PaymentInfosId")
+  creationDate       DateTime  @default(now()) @map("CreationDate")
+  updateDate         DateTime  @updatedAt @map("UpdateDate")
+  deletionDate       DateTime? @map("DeletionDate")
+  barcode            String?   @map("PaymentInfosBarcode")
+  billetUrl          String?   @map("PaymentInfosBilletUrl")
+  pixCode            String?   @map("PaymentInfosPixCode")
+  pixQRCode          String?   @map("PaymentInfosPixQRCode")
+  pixExpirationDate  DateTime? @map("PaymentInfosPixExpirationDate")
+  type               String?   @map("PaymentInfosType")
+  refusalReason      String?   @map("PaymentInfosRefusalReason")
+  installmentNumbers Int?      @map("PaymentInfosInstallmentNumbers")
+  purchase           Purchase? @relation(fields: [purchaseId], references: [id])
+  purchaseId         Int?
+
+  @@map("PaymentInfos")
+  @@schema("serviceschema")
+}
+
+model Subscription {
+  id               Int         @id @default(autoincrement()) @map("SubscriptionId")
+  creationDate     DateTime    @default(now()) @map("CreationDate")
+  updateDate       DateTime    @updatedAt @map("UpdateDate")
+  deletionDate     DateTime?   @map("DeletionDate")
+  planId           Int?        @map("SubscriptionPlanId")
+  subscriptionName String?     @map("SubscriptionName")
+  subscriberCode   String?     @map("SubscriberCode")
+  subscriberStatus String?     @map("SubscriberStatus")
+  orderNote        OrderNote[]
+
+  @@map("Subscription")
+  @@schema("serviceschema")
+}
+
+model ErrorLog {
+  id                        Int                     @id @default(autoincrement()) @map("ErrorLogId")
+  creationDate              DateTime                @default(now()) @map("CreationDate")
+  updateDate                DateTime                @updatedAt @map("UpdateDate")
+  deletionDate              DateTime?               @map("DeletionDate")
+  externalWebhookReceiverId Int                     @map("ExternalWebhookReceiverId")
+  externalWebhookReceiver   ExternalWebhookReceiver @relation(fields: [externalWebhookReceiverId], references: [id])
+  timestamp                 DateTime                @default(now()) @map("ErrorLogDate")
+  message                   String                  @map("Message")
+  level                     String                  @map("Level")
+  payload                   Json                    @map("ErrorLogPayload")
+
+  @@map("ErrorLog")
+  @@schema("integrationschema")
+}
