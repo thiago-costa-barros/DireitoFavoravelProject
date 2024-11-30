@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["next-env.d.js", "**/*.js", "**/*.jsx", ".next/types/**/*.js", "app/_lib/prisma.ts"],
+  "exclude": ["node_modules"]
+}
