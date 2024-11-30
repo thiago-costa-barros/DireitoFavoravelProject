@@ -2,7 +2,7 @@
 
 import dotenv from 'dotenv';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { prisma } from  "@/app/_lib/prisma";
+import { prisma } from "@/app/_lib/prisma";
 import { InsertExternalWebhookReceiver } from './events/insertExternalWebhookReceiver';
 import { verifyToken } from '../utils/tokenVerification';
 import { error } from 'console';
@@ -54,26 +54,31 @@ export default async function HotmartWebhookReceiverHandler(
       throw new Error('Model ExternalWebhookReceiver not found in Prisma Client');
     }
 
-    console.log('Checking if there is a ReceiverId in our database: ', payload.id);
-    const existingExternalWebhookReceiverId = await prisma.externalWebhookReceiver.findUnique({
-      where: {
-        requestId: payload.id,
-        deletionDate: null,
-      },
-    });
-    console.log('Query result:', existingExternalWebhookReceiverId);
-    
-    if (!existingExternalWebhookReceiverId) {
-        
-      console.log('Creating a new ExternalWebhookReceiver:');
-      const newExternalWebhookReceiver = await InsertExternalWebhookReceiver(payload, webhookType);
+    try {
+      console.log('Checking if there is a ReceiverId in our database: ', payload.id);
+      const existingExternalWebhookReceiverId = await prisma.externalWebhookReceiver.findUnique({
+        where: {
+          requestId: payload.id,
+          deletionDate: null,
+        },
+      });
+      console.log('Query result:', existingExternalWebhookReceiverId);
 
-      console.log('Webhook processed successfully. Checking routes events');
-    } else {
-      console.log(
-        "ExternalWebhookHotmartReceiver already exists: ",
-        existingExternalWebhookReceiverId.requestId
-      );
+      if (!existingExternalWebhookReceiverId) {
+
+        console.log('Creating a new ExternalWebhookReceiver:');
+        const newExternalWebhookReceiver = await InsertExternalWebhookReceiver(payload, webhookType);
+
+        console.log('Webhook processed successfully. Checking routes events');
+      } else {
+        console.log(
+          "ExternalWebhookHotmartReceiver already exists: ",
+          existingExternalWebhookReceiverId.requestId
+        );
+      }
+    } catch (error) {
+      console.error('Error query consult:', error);
+      throw error;
     }
   } catch (error) {
     console.error('Error processing webhook:', error);
