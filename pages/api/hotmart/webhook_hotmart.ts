@@ -69,7 +69,7 @@ export default async function HotmartWebhookReceiverHandler(
       console.log('Query result:', existingExternalWebhookReceiverId);
 
       if (!existingExternalWebhookReceiverId) {
-        //const newExternalWebhookReceiver = await InsertExternalWebhookReceiver(payload, webhookType);
+        const newExternalWebhookReceiver = await InsertExternalWebhookReceiver(payload, webhookType);
 
         console.log('Webhook processed successfully. Checking routes events');
       } else {
