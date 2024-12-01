@@ -17,7 +17,7 @@ export default async function HotmartWebhookReceiverHandler(
   res: NextApiResponse
 ): Promise<void> {
   console.log('Starting handler');
-  console.log('Method: ',req.method);
+  //console.log('Method: ',req.method); // Log de debug
   if (req.method !== 'POST') {
     res.setHeader('Allow', ['POST']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
@@ -25,7 +25,7 @@ export default async function HotmartWebhookReceiverHandler(
   }
 
   console.log('Method POST received: '); // Log de debug
-  console.log(req.headers) // Log de debug
+  //console.log(req.headers) // Log de debug
   res.status(200).json({
     message: 'Webhook processed successfully',
   });
@@ -66,7 +66,7 @@ export default async function HotmartWebhookReceiverHandler(
           deletionDate: null,
         },
       });
-      console.log('Query result:', existingExternalWebhookReceiverId);
+      //console.log('Query result:', existingExternalWebhookReceiverId); //Debuglog 
 
       if (!existingExternalWebhookReceiverId) {
         const newExternalWebhookReceiver = await InsertExternalWebhookReceiver(payload, webhookType);
@@ -80,7 +80,7 @@ export default async function HotmartWebhookReceiverHandler(
         console.log('Webhook processed successfully. Checking routes events for ExternalWebhookReceiverId: ', verifyNewExternalWebhookReceiver?.id);
       } else {
         console.log(
-          "ExternalWebhookHotmartReceiver already exists: ",
+          "ExternalWebhookHotmartReceiver already exists for this RequestId: ",
           existingExternalWebhookReceiverId.requestId
         );
       }
