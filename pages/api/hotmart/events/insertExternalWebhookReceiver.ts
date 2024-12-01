@@ -1,7 +1,6 @@
 "use server";
 
 import { prisma } from "@/app/_lib/prisma";
-import { ExternalWebhookReceiver } from "@prisma/client";
 import { ExternalWebhookReceiverStatus } from "../../utils/enum/publicEnum";
 import { MapEnumExternalWebhookReceiverType } from "../../utils/enum/map/mapEnumExternalWebhookReceiverType";
 import { parseDate } from "../../utils/parseDate";
