@@ -57,14 +57,7 @@ export default async function HotmartWebhookReceiverHandler(
       throw new Error('Model ExternalWebhookReceiver not found in Prisma Client');
     }
     console.log('Prisma Client instantiated correctly')
-    try {
-      console.log('Testing database connection...');
-      const testConnection = await prisma.$queryRaw`SELECT 1`;
-      console.log('Database connection successful:', testConnection);
-
-    } catch (error) {
-      console.log('Database conncection error: ', error);
-    }
+    
     try {
       console.log('Checking if there is a ReceiverId in our database: ', payload.id);
       const existingExternalWebhookReceiverId = await prisma.externalWebhookReceiver.findUnique({
@@ -78,7 +71,13 @@ export default async function HotmartWebhookReceiverHandler(
       if (!existingExternalWebhookReceiverId) {
         const newExternalWebhookReceiver = await InsertExternalWebhookReceiver(payload, webhookType);
 
-        console.log('Webhook processed successfully. Checking routes events');
+        const verifyNewExternalWebhookReceiver = await prisma.externalWebhookReceiver.findUnique({
+          where: {
+            requestId: payload.id,
+            deletionDate: null,
+          },
+        })
+        console.log('Webhook processed successfully. Checking routes events for ExternalWebhookReceiverId: ', verifyNewExternalWebhookReceiver?.id);
       } else {
         console.log(
           "ExternalWebhookHotmartReceiver already exists: ",
