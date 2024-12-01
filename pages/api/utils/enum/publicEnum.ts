@@ -1,6 +1,6 @@
 export const ExternalWebhookReceiverType = {
-  Insomnia: {
-      typeMessage: "insomnia/2023.4.0",
+  WebhookTest: {
+      typeMessage: "webhooktest/any_platform",
       typeValue: 0
   },
   Hotmart: {
@@ -23,4 +23,3 @@ type ExternalWebhookReceiverType = typeof ExternalWebhookReceiverType[keyof type
 
   /*================================================================================================================================================================= */
 
-  
