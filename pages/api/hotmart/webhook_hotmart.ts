@@ -6,9 +6,8 @@ import { prisma } from "@/app/_lib/prisma";
 import { InsertExternalWebhookReceiver } from './events/insertExternalWebhookReceiver';
 import { verifyToken } from '../utils/tokenVerification';
 import { error } from 'console';
-import { parseDate } from '../utils/parseDate';
-import { MapEnumExternalWebhookReceiverType } from '../utils/enum/map/mapEnumExternalWebhookReceiverType';
-import { ExternalWebhookReceiverStatus } from '../utils/enum/publicEnum';
+import { VerifyWebhookEvent } from './events/eventsRoutes/verifyWebhookEvent';
+import { ExternalWebhookReceiver } from '@prisma/client';
 
 dotenv.config();
 
@@ -71,13 +70,17 @@ export default async function HotmartWebhookReceiverHandler(
       if (!existingExternalWebhookReceiverId) {
         const newExternalWebhookReceiver = await InsertExternalWebhookReceiver(payload, webhookType);
 
-        const verifyNewExternalWebhookReceiver = await prisma.externalWebhookReceiver.findUnique({
+        const verifyNewExternalWebhookReceiver: ExternalWebhookReceiver | null = await prisma.externalWebhookReceiver.findUnique({
           where: {
             requestId: payload.id,
             deletionDate: null,
           },
         })
         console.log('Webhook processed successfully. Checking routes events for ExternalWebhookReceiverId: ', verifyNewExternalWebhookReceiver?.id);
+        //type verifyNewExternalWebhookReceiver = typeof verifyNewExternalWebhookReceiver[keyof typeof verifyNewExternalWebhookReceiver];
+        
+        const verifyWebhookEvent = await VerifyWebhookEvent(verifyNewExternalWebhookReceiver as ExternalWebhookReceiver)
+        
       } else {
         console.log(
           "ExternalWebhookHotmartReceiver already exists for this RequestId: ",
