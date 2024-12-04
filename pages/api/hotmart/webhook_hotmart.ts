@@ -78,8 +78,8 @@ export default async function HotmartWebhookReceiverHandler(
         })
         console.log('Webhook processed successfully. Checking routes events for ExternalWebhookReceiverId: ', verifyNewExternalWebhookReceiver?.id);
         //type verifyNewExternalWebhookReceiver = typeof verifyNewExternalWebhookReceiver[keyof typeof verifyNewExternalWebhookReceiver];
-        
-        const verifyWebhookEvent = await VerifyWebhookEvent(verifyNewExternalWebhookReceiver as ExternalWebhookReceiver)
+        const eventName: string = payload.event
+        const verifyWebhookEvent = await VerifyWebhookEvent(eventName)
         
       } else {
         console.log(
