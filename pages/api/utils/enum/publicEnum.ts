@@ -23,7 +23,7 @@ type ExternalWebhookReceiverType = typeof ExternalWebhookReceiverType[keyof type
 
   /*================================================================================================================================================================= */
 
-  export const ExternalWebhookReceiverEventName = {
+  export const ExternalWebhookReceiverEventType = {
     PURCHASE_CANCELED :{
       eventName: "PURCHASE_CANCELED",
       eventValue: 0
@@ -77,6 +77,6 @@ type ExternalWebhookReceiverType = typeof ExternalWebhookReceiverType[keyof type
       eventValue: 12
     }
   } as const;
-  type ExternalWebhookReceiverEventName = typeof ExternalWebhookReceiverEventName[keyof typeof ExternalWebhookReceiverEventName];
+  type ExternalWebhookReceiverEventType = typeof ExternalWebhookReceiverEventType[keyof typeof ExternalWebhookReceiverEventType];
 
   /*================================================================================================================================================================= */
