@@ -1,21 +1,20 @@
 import { ExternalWebhookReceiverEventType } from "@/pages/api/utils/enum/publicEnum"
-import { ExternalWebhookReceiver } from "@prisma/client";
 
 export async function VerifyWebhookEvent(eventName: string | null): Promise<any> {
-    const EnumEventName = ExternalWebhookReceiverEventType
+    const EnumEventType = ExternalWebhookReceiverEventType
     console.log('Routing event: ', eventName)
 
     switch(eventName){
-        case eventName = EnumEventName.PURCHASE_OUT_OF_SHOPPING_CART.eventName:
+        case eventName = EnumEventType.PURCHASE_OUT_OF_SHOPPING_CART.eventName:
             console.log('Handling event: ', eventName);
         break;
-        case eventName = EnumEventName.SWITCH_PLAN.eventName:
+        case eventName = EnumEventType.SWITCH_PLAN.eventName:
             console.log('Handling event: ', eventName);
         break;
-        case eventName = EnumEventName.SUBSCRIPTION_CANCELLATION.eventName:
+        case eventName = EnumEventType.SUBSCRIPTION_CANCELLATION.eventName:
             console.log('Handling event: ', eventName);
         break;
-        case eventName = EnumEventName.UPDATE_SUBSCRIPTION_CHARGE_DATE.eventName:
+        case eventName = EnumEventType.UPDATE_SUBSCRIPTION_CHARGE_DATE.eventName:
             console.log('Handling event: ', eventName);
         break;
         default:
