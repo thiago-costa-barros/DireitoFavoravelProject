@@ -4,6 +4,7 @@ import { prisma } from "@/app/_lib/prisma";
 import { ExternalWebhookReceiverStatus } from "../../utils/enum/publicEnum";
 import { MapEnumExternalWebhookReceiverType } from "../../utils/enum/map/mapEnumExternalWebhookReceiverType";
 import { parseDate } from "../../utils/parseDate";
+import { MapEnumExternalWebhookReceiverEventType } from "../../utils/enum/map/mapEnumExternalWebhookReceiverEventType";
 
 
 type Json =  { [key: string]: Json };
@@ -23,7 +24,7 @@ export async function InsertExternalWebhookReceiver(
 
   const requestId = payload.id;
   const eventDate = parseDate(payload.creation_date);
-  const eventName = payload.event;
+  const eventType = MapEnumExternalWebhookReceiverEventType(payload.event);
   const status = ExternalWebhookReceiverStatus.Created;
   const type = MapEnumExternalWebhookReceiverType(webhookType);
   const version = payload.version;
@@ -35,7 +36,7 @@ export async function InsertExternalWebhookReceiver(
       CALL externalschema.executeinsertexternalwebhookreceiver(
       ${requestId}::text,
       ${eventDate}::timestamp,
-      ${eventName}::text,
+      ${eventType}::int4,
       ${status}::int4,
       ${type}::int4,
       ${version}::text,
