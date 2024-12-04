@@ -1,18 +1,12 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider             = "prisma-client-js"
-  previewFeatures      = ["multiSchema","typedSql"]
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema", "typedSql"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["public", "integrationschema", "serviceschema", "externalschema"]
+  schemas  = ["externalschema", "integrationschema", "public", "serviceschema"]
 }
 
 model ExternalWebhookReceiver {
@@ -22,13 +16,13 @@ model ExternalWebhookReceiver {
   deletionDate DateTime?   @map("DeletionDate")
   requestId    String      @unique @map("RequestId")
   eventDate    DateTime    @map("EventDate")
-  eventName    String      @map("EventName")
+  eventType    Int         @map("EventType")
   status       Int         @map("Status")
   version      String      @map("Version")
   payload      Json?       @map("Payload")
   type         Int         @map("Type")
-  orderNote    OrderNote[]
   errorLog     ErrorLog[]
+  orderNote    OrderNote[]
 
   @@map("ExternalWebhookReceiver")
   @@schema("externalschema")
@@ -41,16 +35,16 @@ model OrderNote {
   deletionDate              DateTime?               @map("DeletionDate")
   status                    Int                     @map("Status")
   externalWebhookReceiverId Int                     @map("ExternalWebhookReceiverId")
-  externalWebhookReceiver   ExternalWebhookReceiver @relation(fields: [externalWebhookReceiverId], references: [id])
   productId                 Int                     @map("ProductId")
-  product                   Product                 @relation(fields: [productId], references: [id])
-  affiliates                Affiliates[]
   buyerId                   Int                     @map("BuyerId")
-  buyer                     Buyer                   @relation(fields: [buyerId], references: [id])
   producerName              String?                 @map("ProducerName")
   purchaseId                Int                     @map("PurchaseId")
-  purchase                  Purchase                @relation(fields: [purchaseId], references: [id])
   subscriptionId            Int?                    @map("SubscriptionId")
+  affiliates                Affiliates[]
+  buyer                     Buyer                   @relation(fields: [buyerId], references: [id])
+  externalWebhookReceiver   ExternalWebhookReceiver @relation(fields: [externalWebhookReceiverId], references: [id])
+  product                   Product                 @relation(fields: [productId], references: [id])
+  purchase                  Purchase                @relation(fields: [purchaseId], references: [id])
   subscription              Subscription?           @relation(fields: [subscriptionId], references: [id])
 
   @@map("OrderNote")
@@ -80,8 +74,8 @@ model Affiliates {
   lastOrderDate DateTime?  @map("AffiliateLastOrderDate")
   affiliateCode String?    @unique @map("AffiliateCode")
   affiliateName String?    @map("AffiliateName")
-  orderNote     OrderNote? @relation(fields: [orderNoteId], references: [id])
   orderNoteId   Int?
+  orderNote     OrderNote? @relation(fields: [orderNoteId], references: [id])
 
   @@map("Affiliates")
   @@schema("serviceschema")
@@ -123,8 +117,8 @@ model Commissions {
   convertedToCurrency    String?   @map("CommissionsConvertedToCurrency")
   convertedvalue         Decimal?  @map("CommissionsConvertedValue")
   currencyConvertionRate Decimal?  @map("CommissionsCurrencyConvertionRate")
-  purchase               Purchase? @relation(fields: [purchaseId], references: [id])
   purchaseId             Int?
+  purchase               Purchase? @relation(fields: [purchaseId], references: [id])
 
   @@map("Commissions")
   @@schema("serviceschema")
@@ -154,9 +148,9 @@ model Purchase {
   isOrderBump                      Boolean?       @map("PurchaseIsOrderBump")
   originalTransactionId            String?        @map("PurchaseOriginalTransactionId")
   nextChargeDate                   DateTime?      @map("NextChargeDate")
-  paymentInfos                     PaymentInfos[]
   commissions                      Commissions[]
   orderNote                        OrderNote[]
+  paymentInfos                     PaymentInfos[]
 
   @@map("Purchase")
   @@schema("serviceschema")
@@ -175,8 +169,8 @@ model PaymentInfos {
   type               String?   @map("PaymentInfosType")
   refusalReason      String?   @map("PaymentInfosRefusalReason")
   installmentNumbers Int?      @map("PaymentInfosInstallmentNumbers")
-  purchase           Purchase? @relation(fields: [purchaseId], references: [id])
   purchaseId         Int?
+  purchase           Purchase? @relation(fields: [purchaseId], references: [id])
 
   @@map("PaymentInfos")
   @@schema("serviceschema")
@@ -203,11 +197,11 @@ model ErrorLog {
   updateDate                DateTime                @updatedAt @map("UpdateDate")
   deletionDate              DateTime?               @map("DeletionDate")
   externalWebhookReceiverId Int                     @map("ExternalWebhookReceiverId")
-  externalWebhookReceiver   ExternalWebhookReceiver @relation(fields: [externalWebhookReceiverId], references: [id])
   timestamp                 DateTime                @default(now()) @map("ErrorLogDate")
   message                   String                  @map("Message")
   level                     String                  @map("Level")
   payload                   Json                    @map("ErrorLogPayload")
+  externalWebhookReceiver   ExternalWebhookReceiver @relation(fields: [externalWebhookReceiverId], references: [id])
 
   @@map("ErrorLog")
   @@schema("integrationschema")
