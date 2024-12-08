@@ -1,6 +1,6 @@
 import { ExternalWebhookReceiverEventType } from "../publicEnum";
 
-export function MapEnumExternalWebhookReceiverEventType(eventName: string | undefined): number | undefined {
+export function MapEnumExternalWebhookReceiverEventType(eventName: string ): number  {
     if (eventName?.includes(ExternalWebhookReceiverEventType.PURCHASE_CANCELED.eventName)) {
         return ExternalWebhookReceiverEventType.PURCHASE_CANCELED.eventValue;
     } else if (eventName?.includes(ExternalWebhookReceiverEventType.PURCHASE_COMPLETE.eventName)) {
@@ -29,6 +29,6 @@ export function MapEnumExternalWebhookReceiverEventType(eventName: string | unde
         return ExternalWebhookReceiverEventType.UPDATE_SUBSCRIPTION_CHARGE_DATE.eventValue;
     } 
     else {
-        return undefined;
+        return 99;
     }
 };
