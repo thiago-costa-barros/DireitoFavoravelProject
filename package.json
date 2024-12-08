@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@prisma/client": "^6.0.0",
+    "@prisma/client": "^6.0.1",
     "dotenv": "^16.4.5",
     "next": "15.0.3",
     "prisma-client": "^0.0.0",
@@ -20,7 +20,7 @@
     "@types/node": "22.10.0",
     "@types/react": "18.3.12",
     "postcss": "^8",
-    "prisma": "^6.0.0",
+    "prisma": "^6.0.1",
     "tailwindcss": "^3.4.1",
     "typescript": "5.7.2"
   }
