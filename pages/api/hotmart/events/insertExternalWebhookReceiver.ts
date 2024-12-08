@@ -5,7 +5,7 @@ import { ExternalWebhookReceiverStatus } from "../../utils/enum/publicEnum";
 import { MapEnumExternalWebhookReceiverType } from "../../utils/enum/map/mapEnumExternalWebhookReceiverType";
 import { parseDate } from "../../utils/parseDate";
 import { MapEnumExternalWebhookReceiverEventType } from "../../utils/enum/map/mapEnumExternalWebhookReceiverEventType";
-
+import { externalschema_ExecuteInsertExternalWebhookReceiver } from "@prisma/client/sql";
 
 type Json =  { [key: string]: Json };
 
@@ -32,17 +32,15 @@ export async function InsertExternalWebhookReceiver(
 
   try {
     const newExternalWebhookReceiver = await prisma.$transaction([
-      prisma.$queryRaw`
-      CALL externalschema.executeinsertexternalwebhookreceiver(
-      ${requestId}::text,
-      ${eventDate}::timestamp,
-      ${eventType}::int4,
-      ${status}::int4,
-      ${type}::int4,
-      ${version}::text,
-      ${payloadData}::jsonb
-      )
-      `
+      prisma.$queryRawTyped(externalschema_ExecuteInsertExternalWebhookReceiver(
+        requestId,
+        eventDate,
+        eventType,
+        status,
+        type,
+        version,
+        payloadData
+      ))
     ])
 
     console.log("New ExternalWebhookReceiver");
