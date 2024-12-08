@@ -75,6 +75,10 @@ type ExternalWebhookReceiverType = typeof ExternalWebhookReceiverType[keyof type
     UPDATE_SUBSCRIPTION_CHARGE_DATE: {
       eventName: "UPDATE_SUBSCRIPTION_CHARGE_DATE",
       eventValue: 12
+    },
+    ERROR: {
+      eventName: null,
+      eventValue: 99
     }
   } as const;
   type ExternalWebhookReceiverEventType = typeof ExternalWebhookReceiverEventType[keyof typeof ExternalWebhookReceiverEventType];
